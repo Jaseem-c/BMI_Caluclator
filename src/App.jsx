@@ -2,10 +2,11 @@ import { Button, TextField } from '@mui/material'
 import './App.css'
 import img1 from './assets/img2.png'
 import underweight from './assets/underweight.png'
-import { useState } from 'react'
+import { useState,useEffect } from 'react'
 import healthy from './assets/healthy.png'
 import overweight from './assets/overweight.png'
 import logo from './assets/logo.png'
+
 
 function App() {
   const [Height, setHeight] = useState(0)
@@ -17,6 +18,34 @@ function App() {
 
   // content
   const [content, setContent] = useState(false)
+  // for speak
+  const [textToSpeak, setTextToSpeak] = useState('');
+  const speakText = (text) => {
+    const speech = new SpeechSynthesisUtterance(text);
+    window.speechSynthesis.speak(speech);
+  };
+  useEffect(() => {
+    let text = '';
+    if (!content) {
+      text = "";
+    } else if (BMI < 18.5 && BMI > 0) {
+      text = "You are underweight. Eat more frequently. Choose nutrient-rich foods. Drink smoothies and shakes. Add calories.";
+    } else if (BMI >= 18.5 && BMI <= 24.9) {
+      text = "You are healthy. Maintain a balanced diet. Continue regular physical activity. Monitor your weight regularly.";
+    } else if (BMI > 25) {
+      text = "You are overweight. Exercise regularly. Eat a balanced diet. Avoid sugary drinks and snacks. Monitor your weight.";
+    }
+    if (text !== textToSpeak) {
+      setTextToSpeak(text);
+    }
+  }, [content, BMI, textToSpeak]);
+
+  useEffect(() => {
+    if (textToSpeak) {
+      speakText(textToSpeak);
+    }
+  }, [textToSpeak]);
+  
 
   const validate = (e) => {
     // console.log(e.target.value);
